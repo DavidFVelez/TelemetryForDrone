@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Ruta </title>
+  <!-- Se incluye la hoja de estilos CSS de leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+
+  <!-- Se configura el ancho y el alto para la visualización del mapa -->
+  <style>
+    #map {
+      height: 400px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Trazado de ruta</h1>
+  <div id="map"></div>
+  <!-- Se carga la biblioteca leaflet para crear el mapa interactivo -->
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script>
+    //Se carga el archivo CSV que contiene los valores de lat y longitud
+    fetch('datosRuta.csv')
+      .then(response => response.text())
+      .then(data => {
+        //Se crea un array para almacenar las filas del documento CSV
+        const filas = data.split('\n'); 
+        // Luego se necesita un arreglo para poder guardas las coordenadas
+        const coordenadas = [];
+
+        filas.forEach(line => {
+        
+          //se asigna el valor para lat y lng al separar por coma
+          const [lat, lng] = line.split(',');
+
+          //Control de excepciones por si hay un valor no valido de lat o lng
+          if (!isNaN(lat) && !isNaN(lng)) {
+            // Se agregan al arreglo coordenadas los valores de lat y lng como flotantes
+            coordenadas.push([parseFloat(lat), parseFloat(lng)]);
+          }
+        });
+
+        //se crea un mapa tipo Leaflet, se establece la ventana inicial de vista y el zoom
+        const map = L.map('map').setView(coordenadas[0], 18);
+        //Se cargan y agregan mosaicos al mapa
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+          maxZoom: 20,
+        }).addTo(map);
+
+        //Se agrega al mapa un trazado de color rojo 
+        L.polyline(coordenadas, { color: 'red', dashArray: '5, 10' }).addTo(map);
+      })
+      .catch(error => {
+        console.error('Error al leer documento:', error);
+      });
+  </script>
+</body>
+</html>

@@ -22,6 +22,7 @@ float datosRecibidos[8];
 float auxRecibidos[8];
 unsigned long tiempoAnterior = 0;
 float verifFrame[4] = { 1234.88, 4321.88, 6789.99, 9876.99 };
+//
 
 
 void setup() {
